@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="25sp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="CairoT"
+            android:id="@+id/city_name"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/description"
+            android:layout_below="@id/city_name"
+            android:layout_marginTop="5dp"
+            android:layout_centerHorizontal="true"
+            android:textSize="18sp"
+            android:text="HazeT"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/description"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:textSize="35sp"
+            android:id="@+id/temp_degree"
+            android:text="17"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/day_of_week"
+            android:layout_below="@id/temp_degree"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:textSize="20sp"
+            android:text="FridayT"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/day_of_week"
+            android:layout_toRightOf="@id/day_of_week"
+            android:layout_below="@+id/temp_degree"
+            android:layout_marginTop="20dp"
+            android:textSize="20sp"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
+            android:text="Today"
+            android:id="@+id/today"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/temp_degree"
+            android:layout_marginTop="20dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:textSize="20sp"
+            android:id="@+id/min_temp"
+            android:text="20"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20sp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/temp_degree"
+            android:layout_toStartOf="@id/min_temp"
+            android:layout_toLeftOf="@id/min_temp"
+            android:layout_marginTop="20dp"
+            android:textSize="20sp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:text="20"
+            android:id="@+id/max_temp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="#707070"
+            android:layout_below="@id/today"
+            android:layout_marginTop="5dp"
+            android:id="@+id/sep1"/>
+
+        <!--day2-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/sep1"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:textSize="20sp"
+            android:id="@+id/day2"
+            android:text="day2"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/day2_temp_min"
+            android:layout_below="@id/today"
+            android:layout_marginTop="10dp"
+            android:textSize="20sp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:text="10"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/day2_temp_max"
+            android:layout_below="@id/today"
+            android:layout_marginTop="10dp"
+            android:textSize="20sp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:text="10"
+            android:layout_alignStart="@id/max_temp"
+            android:layout_alignLeft="@id/max_temp" />
+
+        <!--day3-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/day2"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:textSize="20sp"
+            android:id="@+id/day3"
+            android:text="day3"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/day3_temp_min"
+            android:layout_below="@id/day2"
+            android:layout_marginTop="10dp"
+            android:textSize="20sp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:text="7"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/day3_temp_max"
+            android:layout_below="@id/day2"
+            android:layout_alignStart="@id/max_temp"
+            android:layout_marginTop="10dp"
+            android:textSize="20sp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:text="10"
+            android:layout_alignLeft="@id/max_temp" />
+
+        <!--day4-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/day3"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:textSize="20sp"
+            android:id="@+id/day4"
+            android:text="day4"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/day4_temp_min"
+            android:layout_below="@id/day3"
+            android:layout_marginTop="10dp"
+            android:textSize="20sp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:text="10"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/day4_temp_max"
+            android:layout_below="@id/day3"
+            android:layout_alignStart="@id/max_temp"
+            android:layout_marginTop="10dp"
+            android:textSize="20sp"
+            android:text="10"
+            android:layout_alignLeft="@id/max_temp" />
+
+        <!--day5-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/day4"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:textSize="20sp"
+            android:id="@+id/day5"
+            android:text="day5"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/day5_temp_min"
+            android:layout_below="@id/day4"
+            android:layout_marginTop="10dp"
+            android:textSize="20sp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:text="10"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/day5_temp_max"
+            android:layout_below="@id/day4"
+            android:layout_alignStart="@id/max_temp"
+            android:layout_marginTop="10dp"
+            android:textSize="20sp"
+            android:text="10"
+            android:layout_alignLeft="@id/max_temp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="#707070"
+            android:layout_below="@id/day5"
+            android:layout_marginTop="10dp"
+            android:id="@+id/sep2"/>
+
+
+    </RelativeLayout>
+
+</ScrollView>
