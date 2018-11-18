@@ -1,10 +1,13 @@
 package com.example.shazahassan.forecastapp.Fragment;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,6 +49,7 @@ public class CairoFragment extends Fragment {
             day5, day5minTemp, day5MaxTemp,
             pressure, humidity, sunrise, sunset,
             contactUs;
+
     private APIWeatherInterface apiWeatherInterface;
     private Calendar calendar, currentDate;
     private int day, dayOfMonth, hour, currentDateDay, minute, hour1, minute1, currentTemp;
@@ -198,6 +202,7 @@ public class CairoFragment extends Fragment {
                 startActivity(new Intent(getContext(), ContactUs.class));
             }
         });
+
     }
 
     private void setDay(TextView dayText, long date) {
@@ -222,6 +227,8 @@ public class CairoFragment extends Fragment {
     private void getWeather(){
         Call<Weather> callWeather = apiWeatherInterface.cairoWeather();
         callWeather.enqueue(new Callback<Weather>() {
+            @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void onResponse(Call<Weather> call, Response<Weather> response) {
 
@@ -258,6 +265,7 @@ public class CairoFragment extends Fragment {
                 calendar.setTimeZone(TimeZone.getTimeZone("GMT+2"));
                 hour = calendar.get(Calendar.HOUR);
                 minute = calendar.get(Calendar.MINUTE);
+
                 if (minute < 10) {
                     sunrise.setText(hour + ":0" + minute + "AM");
                 } else {

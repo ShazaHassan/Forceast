@@ -55,6 +55,7 @@ public class ParisFragment extends Fragment {
     private WeatherModel weatherModel;
     private boolean minAdded = false, maxAdded = false;
     private ForecastModel forecastModel;
+
     public ParisFragment(){
     }
 
