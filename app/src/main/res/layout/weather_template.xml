@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -112,7 +109,7 @@
             android:textSize="20sp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:text="10"
+            android:text="7"
             android:layout_marginEnd="20dp"
             android:layout_marginRight="20dp" />
 
@@ -188,7 +185,7 @@
             android:textSize="20sp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:text="10"
+            android:text="7"
             android:layout_marginEnd="20dp"
             android:layout_marginRight="20dp" />
 
@@ -224,7 +221,7 @@
             android:textSize="20sp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:text="10"
+            android:text="7"
             android:layout_marginEnd="20dp"
             android:layout_marginRight="20dp" />
 
@@ -246,6 +243,122 @@
             android:layout_below="@id/day5"
             android:layout_marginTop="10dp"
             android:id="@+id/sep2"/>
+
+        <TextView
+            android:id="@+id/sunrise"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/sep2"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:text="Sunrise"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/sunrise_hour"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/sunrise"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="8dp"
+            android:text="hh:mm am"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/sunset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/sep2"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:text="Sunset"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/sunset_hour"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/sunset"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:text="hh:mm pm"
+            android:textSize="20sp" />
+
+        <View
+            android:id="@+id/sep3"
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:layout_below="@id/sunset_hour"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
+            android:background="#707070" />
+
+        <TextView
+            android:id="@+id/pressure"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/sep3"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:text="Pressure"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/pressure_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pressure"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="8dp"
+            android:text="hh:mm am"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/humidity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/sep3"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:text="Humidity"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/humidity_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/humidity"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:text="hh:mm pm"
+            android:textSize="20sp" />
+
+        <View
+            android:id="@+id/sep4"
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:layout_below="@id/humidity_number"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
+            android:background="#707070" />
 
 
     </RelativeLayout>

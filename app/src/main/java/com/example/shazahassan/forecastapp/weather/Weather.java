@@ -26,33 +26,38 @@ public class Weather {
     @SerializedName("main")
     @Expose
     public MainData main;
+    @SerializedName("sys")
+    @Expose
+    public SysData sysData = null;
+
 //    public List<MainData> main = null;
 //
     public class MainData {
         @SerializedName("temp")
         @Expose
-        public double temp;
+        public int temp;
 
         @SerializedName("pressure")
         @Expose
-        public String pressure;
+        public int pressure;
 
         @SerializedName("humidity")
         @Expose
-        public String humidity;
+        public int humidity;
     }
-//
-//    public List<SysData> sysData = null;
-//
-//    public class SysData {
-//
-//        @SerializedName("country")
-//        public String country;
-//
-//        @SerializedName("sunrise")
-//        public String sunrise;
-//
-//        @SerializedName("sunset")
-//        public String sunset;
-//    }
+
+    public class SysData {
+
+        @SerializedName("country")
+        @Expose
+        public String country;
+
+        @SerializedName("sunrise")
+        @Expose
+        public long sunrise;
+
+        @SerializedName("sunset")
+        @Expose
+        public long sunset;
+    }
 }

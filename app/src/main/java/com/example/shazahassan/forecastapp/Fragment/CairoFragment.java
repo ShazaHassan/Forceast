@@ -1,9 +1,7 @@
 package com.example.shazahassan.forecastapp.Fragment;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,13 +9,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.shazahassan.forecastapp.R;
+import com.example.shazahassan.forecastapp.SqLite.DatabaseHelper;
+import com.example.shazahassan.forecastapp.SqLite.model.WeatherModel;
 import com.example.shazahassan.forecastapp.forecast.Forecast;
 import com.example.shazahassan.forecastapp.retrofit.APIClient;
 import com.example.shazahassan.forecastapp.retrofit.APIWeatherInterface;
 import com.example.shazahassan.forecastapp.weather.Weather;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -32,9 +34,11 @@ public class CairoFragment extends Fragment {
 
     private TextView city,description,tempDegree,dayOfWeek,minTemp,maxTemp,day2,day2minTemp,day2MaxTemp
             ,day3,day3minTemp,day3MaxTemp
-            ,day4,day4minTemp,day4MaxTemp
-            ,day5,day5minTemp,day5MaxTemp;
+            ,day4,day4minTemp,day4MaxTemp, day5, day5minTemp, day5MaxTemp, pressure, humidity, sunrise, sunset;
     private APIWeatherInterface apiWeatherInterface;
+    private Calendar calendar, currentDate;
+    private int day, dayOfMonth, hour, currentDateDay, minute, hour1, minute1;
+    private DatabaseHelper helper;
 
     public CairoFragment(){
     }
@@ -44,7 +48,11 @@ public class CairoFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.weather_template, container, false);
-         getReferences(rootView);
+        helper = new DatabaseHelper(getContext());
+        getReferences(rootView);
+        calendar = Calendar.getInstance();
+        currentDate = Calendar.getInstance();
+        currentDateDay = currentDate.get(Calendar.DAY_OF_MONTH);
 
         apiWeatherInterface = APIClient.client().create(APIWeatherInterface.class);
 
@@ -60,6 +68,10 @@ public class CairoFragment extends Fragment {
         dayOfWeek = rootView.findViewById(R.id.day_of_week);
         minTemp = rootView.findViewById(R.id.min_temp);
         maxTemp = rootView.findViewById(R.id.max_temp);
+        pressure = rootView.findViewById(R.id.pressure_number);
+        humidity = rootView.findViewById(R.id.humidity_number);
+        sunrise = rootView.findViewById(R.id.sunrise_hour);
+        sunset = rootView.findViewById(R.id.sunset_hour);
         //day2
         day2 = rootView.findViewById(R.id.day2);
         day2minTemp = rootView.findViewById(R.id.day2_temp_min);
@@ -78,54 +90,22 @@ public class CairoFragment extends Fragment {
         day5MaxTemp = rootView.findViewById(R.id.day5_temp_max);
     }
 
-    private void setDay(){
-        Calendar calendar = Calendar.getInstance();
-        int day = calendar.get(Calendar.DAY_OF_WEEK);
-        if(day == Calendar.SATURDAY){
-            dayOfWeek.setText("Saturday");
-            day2.setText("Sunday");
-            day3.setText("Monday");
-            day4.setText("Tuesday");
-            day5.setText("Wednesday");
-        } else if( day == Calendar.SUNDAY){
-            dayOfWeek.setText("Sunday");
-            day2.setText("Monday");
-            day3.setText("Tuesday");
-            day4.setText("Wednesday");
-            day5.setText("Thursday");
-        } else if (day ==Calendar.MONDAY){
-            dayOfWeek.setText("Monday");
-            day2.setText("Tuesday");
-            day3.setText("Wednesday");
-            day4.setText("Thursday");
-            day5.setText("Friday");
-        }else if (day ==Calendar.TUESDAY){
-            dayOfWeek.setText("Tuesday");
-            day2.setText("Wednesday");
-            day3.setText("Thursday");
-            day4.setText("Friday");
-            day5.setText("Saturday");
-        }else if (day ==Calendar.WEDNESDAY){
-            dayOfWeek.setText("Wednesday");
-            day2.setText("Thursday");
-            day3.setText("Friday");
-            day4.setText("Saturday");
-            day5.setText("Sunday");
-        }else if (day ==Calendar.THURSDAY){
-            dayOfWeek.setText("Thursday");
-            day2.setText("Friday");
-            day3.setText("Saturday");
-            day4.setText("Sunday");
-            day5.setText("Monday");
-        }else if (day ==Calendar.FRIDAY){
-            dayOfWeek.setText("Friday");
-            day2.setText("Saturday");
-            day3.setText("Sunday");
-            day4.setText("Monday");
-            day5.setText("Tuesday");
+    private void setDay(TextView dayText, long date) {
+        if (date == Calendar.SATURDAY) {
+            dayText.setText("Saturday");
+        } else if (date == Calendar.SUNDAY) {
+            dayText.setText("Sunday");
+        } else if (date == Calendar.MONDAY) {
+            dayText.setText("Monday");
+        } else if (date == Calendar.TUESDAY) {
+            dayText.setText("Tuesday");
+        } else if (date == Calendar.WEDNESDAY) {
+            dayText.setText("Wednesday");
+        } else if (date == Calendar.THURSDAY) {
+            dayText.setText("Thursday");
+        } else if (date == Calendar.FRIDAY) {
+            dayText.setText("Friday");
         }
-
-        Log.v("dayOfWeek",Integer.toString(calendar.get(Calendar.DAY_OF_MONTH)));
 
     }
 
@@ -141,21 +121,47 @@ public class CairoFragment extends Fragment {
                 String name = resource.name;
                 Log.v("nameCity",name);
                 city.setText(name);
+
+                //today name
+                long dt = resource.dt;
+                calendar.setTimeInMillis(dt * 1000);
+                day = calendar.get(Calendar.DAY_OF_WEEK);
+                hour = calendar.get(Calendar.HOUR_OF_DAY);
+                Log.v("hour", hour + "");
+                setDay(dayOfWeek, day);
+
+                //weather desc
                 List<Weather.WeatherData> weatherDataList = resource.weather;
-                Log.v("weatherData", weatherDataList.get(0).description);
                 description.setText(weatherDataList.get(0).description);
-                setDay();
+                //main data temp pressure humidity
                 Weather.MainData mainData = resource.main;
+                tempDegree.setText(Integer.toString(mainData.temp));
+                pressure.setText(Integer.toString(mainData.pressure) + "hPa");
+                humidity.setText(Integer.toString(mainData.humidity) + "%");
 
-                double tempInC = mainData.temp - 273.15;
-                tempDegree.setText(Integer.toString((int) tempInC));
-                Log.v("Temp",Integer.toString((int) tempInC));
+                //sunrise sunset
+                Weather.SysData sysData = resource.sysData;
+                long sunriseHour = sysData.sunrise;
+                Date date = new Date(sunriseHour * 1000L);
+                calendar.setTime(date);
+                hour = calendar.get(Calendar.HOUR);
+                minute = calendar.get(Calendar.MINUTE);
+                sunrise.setText(hour + ":" + minute + "AM");
+                long sunsetHour = sysData.sunset;
+                date = new Date(sunsetHour * 1000L);
+                calendar.setTime(date);
+                hour1 = calendar.get(Calendar.HOUR);
+                minute1 = calendar.get(Calendar.MINUTE);
+                sunset.setText(hour + ":" + minute + "PM");
 
+                // save data offline
+                helper.insertNewData(new WeatherModel(mainData.temp, mainData.pressure, mainData.humidity,
+                        name, weatherDataList.get(0).description, hour1 + ":" + minute1 + "PM", hour + ":" + minute + "AM"));
             }
 
             @Override
             public void onFailure(Call<Weather> call, Throwable t) {
-                Log.v("nameCity",t.getLocalizedMessage());
+                Log.v("ERROR", t.getLocalizedMessage());
                 call.cancel();
             }
         });
@@ -172,49 +178,110 @@ public class CairoFragment extends Fragment {
                 //day1
                 // temp at 3:00 am as min Temp
                 // temp at 12:00 pm as max Temp
-                Forecast.mainData mainDataMin = listDataList.get(0).main;
-                double tempInCMin = mainDataMin.temp - 273.15;
-                minTemp.setText(Integer.toString((int) tempInCMin));
-                Log.v("Temp2",Integer.toString((int) tempInCMin));
-                Forecast.mainData mainDataMax = listDataList.get(3).main;
-                double tempInCMax = mainDataMax.temp - 273.15;
-                maxTemp.setText(Integer.toString((int) tempInCMax));
+                for (Forecast.listData listData : listDataList) {
+                    Forecast.mainData mainData = listData.main;
+                    long dt = listData.dt;
+                    Date date = new Date(dt * 1000L);
+                    // the format of your date
+                    // format of the date
+                    calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+                    calendar.setTime(date);
+                    day = calendar.get(Calendar.DAY_OF_WEEK);
+                    dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+                    hour = calendar.get(Calendar.HOUR_OF_DAY);
+                    if (dayOfMonth == currentDateDay) {
+                        Log.v("Today", day + "");
+                        Log.v("Today", hour + "");
+                        if (hour == 3) {
+                            minTemp.setText(Integer.toString((int) mainData.temp));
+                        } else if (hour == 12) {
+                            maxTemp.setText(Integer.toString((int) mainData.temp));
+                        }
+                    } else if ((dayOfMonth - currentDateDay) == 1) {
+                        setDay(day2, day);
+                        if (hour == 3) {
+                            day2minTemp.setText(Integer.toString((int) mainData.temp));
+                        } else if (hour == 12) {
+                            day2MaxTemp.setText(Integer.toString((int) mainData.temp));
+                        }
+                    } else if ((dayOfMonth - currentDateDay) == 2) {
+                        setDay(day3, day);
+                        if (hour == 3) {
+                            day3minTemp.setText(Integer.toString((int) mainData.temp));
+                        } else if (hour == 12) {
+                            day3MaxTemp.setText(Integer.toString((int) mainData.temp));
+                        }
+                    } else if ((dayOfMonth - currentDateDay) == 3) {
+                        setDay(day4, day);
+                        if (hour == 3) {
+                            day4minTemp.setText(Integer.toString((int) mainData.temp));
+                        } else if (hour == 12) {
+                            day4MaxTemp.setText(Integer.toString((int) mainData.temp));
+                        }
+                    } else if ((dayOfMonth - currentDateDay) == 4) {
+                        setDay(day5, day);
+                        if (hour == 3) {
+                            day5minTemp.setText(Integer.toString((int) mainData.temp));
+                        } else if (hour == 12) {
+                            day5MaxTemp.setText(Integer.toString((int) mainData.temp));
+                        }
+                    }
+                }
+//                Forecast.mainData mainDataMin = listDataList.get(0).main;
+//                //min
+////                minTemp.setText(Integer.toString((int) mainDataMin.temp));
+//                //max
+//                Forecast.mainData mainDataMax = listDataList.get(3).main;
+////                maxTemp.setText(Integer.toString((int) mainDataMax.temp));
+//
+//                //day2
+//                Forecast.mainData mainDataMinDay2 = listDataList.get(8).main;
+//                //min
+////                .setText(Integer.toString((int) mainDataMinDay2.temp));
+//                //max
+//                Forecast.mainData mainDataMaxDay2 = listDataList.get(11).main;
+//                day2MaxTemp.setText(Integer.toString((int) mainDataMaxDay2.temp));
+//
+//                long unixSeconds = listDataList.get(8).dt;
+//                // convert seconds to milliseconds
+//                Date date = new Date(unixSeconds*1000L);
+//                // the format of your date
+//                // format of the date
+//                SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+//                jdf.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+//                String java_date = jdf.format(date);
+//                calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+//                calendar.setTime(date);
+//                day = calendar.get(Calendar.DAY_OF_WEEK);
+//                hour = calendar.get(Calendar.HOUR_OF_DAY);
+//                Log.v("hourNow",hour+"");
 
-                //day2
-                Forecast.mainData mainDataMinDay2 = listDataList.get(8).main;
-                double tempInCMinDay2 = mainDataMinDay2.temp - 273.15;
-                day2minTemp.setText(Integer.toString((int) tempInCMinDay2));
-                Log.v("Temp2",Integer.toString((int) tempInCMin));
-                Forecast.mainData mainDataMaxDay2 = listDataList.get(11).main;
-                double tempInCMaxDay2 = mainDataMaxDay2.temp - 273.15;
-                day2MaxTemp.setText(Integer.toString((int) tempInCMaxDay2));
+//                //day3
+//                Forecast.mainData mainDataMinDay3 = listDataList.get(16).main;
+//                day3minTemp.setText(Integer.toString((int) mainDataMinDay3.temp));
+//                Forecast.mainData mainDataMaxDay3 = listDataList.get(19).main;
+//                day3MaxTemp.setText(Integer.toString((int) mainDataMaxDay3.temp));
+//                calendar.setTimeInMillis(listDataList.get(16).dt*1000);
+//                day = calendar.get(Calendar.DAY_OF_WEEK);
+//                setDay(day3,day);
 
-                //day3
-                Forecast.mainData mainDataMinDay3 = listDataList.get(16).main;
-                double tempInCMinDay3 = mainDataMinDay3.temp - 273.15;
-                day3minTemp.setText(Integer.toString((int) tempInCMinDay3));
-                Log.v("Temp2",Integer.toString((int) tempInCMin));
-                Forecast.mainData mainDataMaxDay3 = listDataList.get(19).main;
-                double tempInCMaxDay3 = mainDataMaxDay3.temp - 273.15;
-                day3MaxTemp.setText(Integer.toString((int) tempInCMaxDay3));
+//                //day4
+//                Forecast.mainData mainDataMinDay4 = listDataList.get(24).main;
+//                day4minTemp.setText(Integer.toString((int) mainDataMinDay4.temp));
+//                Forecast.mainData mainDataMaxDay4 = listDataList.get(27).main;
+//                day4MaxTemp.setText(Integer.toString((int) mainDataMaxDay4.temp));
+//                calendar.setTimeInMillis(listDataList.get(24).dt*1000);
+//                day = calendar.get(Calendar.DAY_OF_WEEK);
+//                setDay(day4,day);
 
-                //day4
-                Forecast.mainData mainDataMinDay4 = listDataList.get(24).main;
-                double tempInCMinDay4 = mainDataMinDay4.temp - 273.15;
-                day4minTemp.setText(Integer.toString((int) tempInCMinDay4));
-                Log.v("Temp2",Integer.toString((int) tempInCMin));
-                Forecast.mainData mainDataMaxDay4 = listDataList.get(27).main;
-                double tempInCMaxDay4 = mainDataMaxDay4.temp - 273.15;
-                day4MaxTemp.setText(Integer.toString((int) tempInCMaxDay4));
-
-                //day5
-                Forecast.mainData mainDataMinDay5 = listDataList.get(32).main;
-                double tempInCMinDay5 = mainDataMinDay5.temp - 273.15;
-                day5minTemp.setText(Integer.toString((int) tempInCMinDay5));
-                Log.v("Temp2",Integer.toString((int) tempInCMin));
-                Forecast.mainData mainDataMaxDay5 = listDataList.get(35).main;
-                double tempInCMaxDay5 = mainDataMaxDay5.temp - 273.15;
-                day5MaxTemp.setText(Integer.toString((int) tempInCMaxDay5));
+//                //day5
+//                Forecast.mainData mainDataMinDay5 = listDataList.get(32).main;
+//                day5minTemp.setText(Integer.toString((int) mainDataMinDay5.temp));
+//                Forecast.mainData mainDataMaxDay5 = listDataList.get(35).main;
+//                day5MaxTemp.setText(Integer.toString((int) mainDataMaxDay5.temp));
+//                calendar.setTimeInMillis(listDataList.get(32).dt*1000);
+//                day = calendar.get(Calendar.DAY_OF_WEEK);
+//                setDay(day5,day);
             }
 
             @Override

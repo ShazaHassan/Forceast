@@ -13,6 +13,8 @@ public class Forecast {
     public List<listData> list = null;
 
     public class listData{
+        @SerializedName("dt")
+        public long dt;
         @SerializedName("main")
         @Expose
         public mainData main;
