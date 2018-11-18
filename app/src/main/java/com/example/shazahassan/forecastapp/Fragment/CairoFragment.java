@@ -1,5 +1,8 @@
 package com.example.shazahassan.forecastapp.Fragment;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -7,9 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.shazahassan.forecastapp.R;
-import com.example.shazahassan.forecastapp.SqLite.DatabaseHelper;
+import com.example.shazahassan.forecastapp.SqLite.WeatherDatabaseHelper;
+import com.example.shazahassan.forecastapp.SqLite.model.ForecastModel;
 import com.example.shazahassan.forecastapp.SqLite.model.WeatherModel;
 import com.example.shazahassan.forecastapp.forecast.Forecast;
 import com.example.shazahassan.forecastapp.retrofit.APIClient;
@@ -37,8 +42,14 @@ public class CairoFragment extends Fragment {
             ,day4,day4minTemp,day4MaxTemp, day5, day5minTemp, day5MaxTemp, pressure, humidity, sunrise, sunset;
     private APIWeatherInterface apiWeatherInterface;
     private Calendar calendar, currentDate;
-    private int day, dayOfMonth, hour, currentDateDay, minute, hour1, minute1;
-    private DatabaseHelper helper;
+    private int day, dayOfMonth, hour, currentDateDay, minute, hour1, minute1, currentTemp;
+
+
+    private WeatherDatabaseHelper helper, forecastDatabaseHelper;
+
+    private WeatherModel weatherModel;
+    private boolean minAdded = false, maxAdded = false;
+    private ForecastModel forecastModel;
 
     public CairoFragment(){
     }
@@ -48,17 +59,101 @@ public class CairoFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.weather_template, container, false);
-        helper = new DatabaseHelper(getContext());
+        helper = new WeatherDatabaseHelper(getContext());
+        forecastDatabaseHelper = new WeatherDatabaseHelper(getContext());
+        forecastModel = new ForecastModel();
         getReferences(rootView);
         calendar = Calendar.getInstance();
         currentDate = Calendar.getInstance();
         currentDateDay = currentDate.get(Calendar.DAY_OF_MONTH);
 
-        apiWeatherInterface = APIClient.client().create(APIWeatherInterface.class);
+        if (isConnected()) {
+            apiWeatherInterface = APIClient.client().create(APIWeatherInterface.class);
+            getWeather();
+            getForecast();
+            Toast.makeText(getContext(), "connect", Toast.LENGTH_LONG).show();
+        } else {
+            weatherModel = helper.getOneCity("Cairo");
+            showWeatherOffline(weatherModel);
+            forecastModel = forecastDatabaseHelper.getOneCityForecast("Cairo");
+            showForecastOffline(forecastModel);
+            Toast.makeText(getContext(), "not connect", Toast.LENGTH_LONG).show();
+        }
 
-        getWeather();
-        getForecast();
         return rootView;
+    }
+
+    private boolean isConnected() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnected();
+        return isConnected;
+    }
+
+    private void showWeatherOffline(WeatherModel model) {
+        //name
+        city.setText(model.getCity());
+        //day
+        int dt = model.getDate();
+        Log.v("hourdate", dt + "");
+        calendar.setTimeInMillis(dt * 1000L);
+        day = calendar.get(Calendar.DAY_OF_WEEK);
+        Log.v("hour", day + "");
+        setDay(dayOfWeek, day);
+        //desc
+        description.setText(model.getDescription());
+        //main data temp pressure humidity
+        tempDegree.setText(Integer.toString(model.getTemp()));
+        pressure.setText(Integer.toString(model.getPressure()) + "hPa");
+        humidity.setText(Integer.toString(model.getHumidity()) + "%");
+        //sunrise and sunset
+        sunrise.setText(model.getSunrise());
+        sunset.setText(model.getSunset());
+
+    }
+
+    private void showForecastOffline(ForecastModel model) {
+        //name
+        city.setText(model.getCityName());
+        //day
+        minTemp.setText(Integer.toString(model.getDay1Min()));
+        maxTemp.setText(Integer.toString(model.getDay1Max()));
+
+        int dt = model.getDay2();
+        calendar.setTimeInMillis(dt * 1000L);
+        Log.v("hour", dt + "");
+        day = calendar.get(Calendar.DAY_OF_WEEK);
+        Log.v("hour", " day " + day);
+        setDay(day2, day);
+        day2minTemp.setText(Integer.toString(model.getDay2Min()));
+        day2MaxTemp.setText(Integer.toString(model.getDay2Max()));
+
+        dt = model.getDay3();
+        Log.v("hour", dt + "");
+        calendar.setTimeInMillis(dt * 1000L);
+        int day3date = calendar.get(Calendar.DAY_OF_WEEK);
+        Log.v("hour", " day " + day3date);
+        setDay(day3, day3date);
+        day3minTemp.setText(Integer.toString(model.getDay3Min()));
+        day3MaxTemp.setText(Integer.toString(model.getDay3Max()));
+
+        dt = model.getDay4();
+        calendar.setTimeInMillis(dt * 1000L);
+        int day4date = calendar.get(Calendar.DAY_OF_WEEK);
+        setDay(day4, day4date);
+        day4minTemp.setText(Integer.toString(model.getDay4Min()));
+        day4MaxTemp.setText(Integer.toString(model.getDay4Max()));
+
+        dt = model.getDay5();
+        calendar.setTimeInMillis(dt * 1000L);
+        int day5date = calendar.get(Calendar.DAY_OF_WEEK);
+        setDay(day5, day5date);
+        day5minTemp.setText(Integer.toString(model.getDay5Min()));
+        day5MaxTemp.setText(Integer.toString(model.getDay5Max()));
+
     }
 
     private void getReferences(View rootView){
@@ -135,9 +230,10 @@ public class CairoFragment extends Fragment {
                 description.setText(weatherDataList.get(0).description);
                 //main data temp pressure humidity
                 Weather.MainData mainData = resource.main;
-                tempDegree.setText(Integer.toString(mainData.temp));
-                pressure.setText(Integer.toString(mainData.pressure) + "hPa");
-                humidity.setText(Integer.toString(mainData.humidity) + "%");
+                tempDegree.setText(Integer.toString((int) mainData.temp));
+                currentTemp = (int) mainData.temp;
+                pressure.setText(Integer.toString((int) mainData.pressure) + "hPa");
+                humidity.setText(Integer.toString((int) mainData.humidity) + "%");
 
                 //sunrise sunset
                 Weather.SysData sysData = resource.sysData;
@@ -155,7 +251,7 @@ public class CairoFragment extends Fragment {
                 sunset.setText(hour + ":" + minute + "PM");
 
                 // save data offline
-                helper.insertNewData(new WeatherModel(mainData.temp, mainData.pressure, mainData.humidity,
+                helper.insertNewData(new WeatherModel((int) mainData.temp, (int) mainData.pressure, (int) mainData.humidity, resource.dt,
                         name, weatherDataList.get(0).description, hour1 + ":" + minute1 + "PM", hour + ":" + minute + "AM"));
             }
 
@@ -175,6 +271,7 @@ public class CairoFragment extends Fragment {
                 Log.d("TAG",response.code()+"");
                 Forecast resource = response.body();
                 List<Forecast.listData> listDataList = resource.list;
+                forecastModel.setCityName("Cairo");
                 //day1
                 // temp at 3:00 am as min Temp
                 // temp at 12:00 pm as max Temp
@@ -194,94 +291,75 @@ public class CairoFragment extends Fragment {
                         Log.v("Today", hour + "");
                         if (hour == 3) {
                             minTemp.setText(Integer.toString((int) mainData.temp));
+                            forecastModel.setDay1Min((int) mainData.temp);
+                            minAdded = true;
                         } else if (hour == 12) {
                             maxTemp.setText(Integer.toString((int) mainData.temp));
+                            maxAdded = true;
+                            forecastModel.setDay1Max((int) mainData.temp);
                         }
                     } else if ((dayOfMonth - currentDateDay) == 1) {
+                        forecastModel.setDay2((int) listData.dt);
                         setDay(day2, day);
                         if (hour == 3) {
                             day2minTemp.setText(Integer.toString((int) mainData.temp));
+                            forecastModel.setDay2Min((int) mainData.temp);
+                            if (!minAdded) {
+                                if (((int) mainData.temp) < currentTemp) {
+                                    minTemp.setText(Integer.toString((int) mainData.temp));
+                                    forecastModel.setDay1Min((int) mainData.temp);
+                                } else {
+                                    minTemp.setText(Integer.toString(currentTemp));
+                                    forecastModel.setDay1Max(currentTemp);
+                                }
+                            }
                         } else if (hour == 12) {
                             day2MaxTemp.setText(Integer.toString((int) mainData.temp));
+                            forecastModel.setDay2Max((int) mainData.temp);
+                            if (!maxAdded) {
+                                if (((int) mainData.temp) > currentTemp) {
+                                    maxTemp.setText(Integer.toString((int) mainData.temp));
+                                    forecastModel.setDay1Max((int) mainData.temp);
+                                } else {
+                                    maxTemp.setText(Integer.toString(currentTemp));
+                                    forecastModel.setDay1Max(currentTemp);
+                                }
+                            }
                         }
                     } else if ((dayOfMonth - currentDateDay) == 2) {
+                        forecastModel.setDay3((int) listData.dt);
                         setDay(day3, day);
                         if (hour == 3) {
                             day3minTemp.setText(Integer.toString((int) mainData.temp));
+                            forecastModel.setDay3Min((int) mainData.temp);
                         } else if (hour == 12) {
                             day3MaxTemp.setText(Integer.toString((int) mainData.temp));
+                            forecastModel.setDay3Max((int) mainData.temp);
                         }
                     } else if ((dayOfMonth - currentDateDay) == 3) {
+                        forecastModel.setDay4((int) listData.dt);
                         setDay(day4, day);
                         if (hour == 3) {
                             day4minTemp.setText(Integer.toString((int) mainData.temp));
+                            forecastModel.setDay4Min((int) mainData.temp);
                         } else if (hour == 12) {
                             day4MaxTemp.setText(Integer.toString((int) mainData.temp));
+                            forecastModel.setDay4Max((int) mainData.temp);
                         }
                     } else if ((dayOfMonth - currentDateDay) == 4) {
+                        forecastModel.setDay5((int) listData.dt);
                         setDay(day5, day);
                         if (hour == 3) {
                             day5minTemp.setText(Integer.toString((int) mainData.temp));
+                            forecastModel.setDay5Min((int) mainData.temp);
                         } else if (hour == 12) {
                             day5MaxTemp.setText(Integer.toString((int) mainData.temp));
+                            forecastModel.setDay5Max((int) mainData.temp);
+                            forecastDatabaseHelper.insertNewDataForecast(forecastModel);
                         }
                     }
                 }
-//                Forecast.mainData mainDataMin = listDataList.get(0).main;
-//                //min
-////                minTemp.setText(Integer.toString((int) mainDataMin.temp));
-//                //max
-//                Forecast.mainData mainDataMax = listDataList.get(3).main;
-////                maxTemp.setText(Integer.toString((int) mainDataMax.temp));
-//
-//                //day2
-//                Forecast.mainData mainDataMinDay2 = listDataList.get(8).main;
-//                //min
-////                .setText(Integer.toString((int) mainDataMinDay2.temp));
-//                //max
-//                Forecast.mainData mainDataMaxDay2 = listDataList.get(11).main;
-//                day2MaxTemp.setText(Integer.toString((int) mainDataMaxDay2.temp));
-//
-//                long unixSeconds = listDataList.get(8).dt;
-//                // convert seconds to milliseconds
-//                Date date = new Date(unixSeconds*1000L);
-//                // the format of your date
-//                // format of the date
-//                SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
-//                jdf.setTimeZone(TimeZone.getTimeZone("GMT+0"));
-//                String java_date = jdf.format(date);
-//                calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
-//                calendar.setTime(date);
-//                day = calendar.get(Calendar.DAY_OF_WEEK);
-//                hour = calendar.get(Calendar.HOUR_OF_DAY);
-//                Log.v("hourNow",hour+"");
 
-//                //day3
-//                Forecast.mainData mainDataMinDay3 = listDataList.get(16).main;
-//                day3minTemp.setText(Integer.toString((int) mainDataMinDay3.temp));
-//                Forecast.mainData mainDataMaxDay3 = listDataList.get(19).main;
-//                day3MaxTemp.setText(Integer.toString((int) mainDataMaxDay3.temp));
-//                calendar.setTimeInMillis(listDataList.get(16).dt*1000);
-//                day = calendar.get(Calendar.DAY_OF_WEEK);
-//                setDay(day3,day);
-
-//                //day4
-//                Forecast.mainData mainDataMinDay4 = listDataList.get(24).main;
-//                day4minTemp.setText(Integer.toString((int) mainDataMinDay4.temp));
-//                Forecast.mainData mainDataMaxDay4 = listDataList.get(27).main;
-//                day4MaxTemp.setText(Integer.toString((int) mainDataMaxDay4.temp));
-//                calendar.setTimeInMillis(listDataList.get(24).dt*1000);
-//                day = calendar.get(Calendar.DAY_OF_WEEK);
-//                setDay(day4,day);
-
-//                //day5
-//                Forecast.mainData mainDataMinDay5 = listDataList.get(32).main;
-//                day5minTemp.setText(Integer.toString((int) mainDataMinDay5.temp));
-//                Forecast.mainData mainDataMaxDay5 = listDataList.get(35).main;
-//                day5MaxTemp.setText(Integer.toString((int) mainDataMaxDay5.temp));
-//                calendar.setTimeInMillis(listDataList.get(32).dt*1000);
-//                day = calendar.get(Calendar.DAY_OF_WEEK);
-//                setDay(day5,day);
             }
 
             @Override

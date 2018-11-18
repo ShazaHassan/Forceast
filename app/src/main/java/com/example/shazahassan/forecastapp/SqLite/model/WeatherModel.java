@@ -15,29 +15,41 @@ public class WeatherModel {
     public static final String SUNSET_COLUMN = "Sunset";
     public static final String DESCRIPTION_COLUMN = "Description";
     public static final String SUNRISE_COLUMN = "Sunrise";
+    public static final String DATE_COLUMN = "Date";
+
 
     public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "("
             + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + CITY_COLUMN + " TEXT,"
+            + CITY_COLUMN + " TEXT NOT NULL,"
             + CURRENT_TEMP_COLUMN + " INTEGER NOT NULL,"
             + PRESSURE_COLUMN + " INTEGER NOT NULL,"
             + HUMIDITY_COLUMN + " INTEGER NOT NULL,"
             + DESCRIPTION_COLUMN + " TEXT NOT NULL,"
             + SUNRISE_COLUMN + " TEXT NOT NULL,"
-            + SUNSET_COLUMN + " TEXT NOT NULL"
+            + SUNSET_COLUMN + " TEXT NOT NULL,"
+            + DATE_COLUMN + " INTEGER NOT NULL"
             + ")";
 
-    private int temp, pressure, humidity;
+    private int temp, pressure, humidity, date;
     private String city, description, sunset, sunrise;
 
-    public WeatherModel(int temp, int pressure, int humidity, String city, String description, String sunset, String sunrise) {
+    public WeatherModel(int temp, int pressure, int humidity, int date, String city, String description, String sunset, String sunrise) {
         this.temp = temp;
         this.pressure = pressure;
         this.humidity = humidity;
+        this.date = date;
         this.city = city;
         this.description = description;
         this.sunset = sunset;
         this.sunrise = sunrise;
+    }
+
+    public int getDate() {
+        return date;
+    }
+
+    public void setDate(int date) {
+        this.date = date;
     }
 
     public WeatherModel() {

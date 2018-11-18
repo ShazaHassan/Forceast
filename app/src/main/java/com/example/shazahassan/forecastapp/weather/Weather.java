@@ -35,15 +35,15 @@ public class Weather {
     public class MainData {
         @SerializedName("temp")
         @Expose
-        public int temp;
+        public float temp;
 
         @SerializedName("pressure")
         @Expose
-        public int pressure;
+        public float pressure;
 
         @SerializedName("humidity")
         @Expose
-        public int humidity;
+        public float humidity;
     }
 
     public class SysData {
