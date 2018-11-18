@@ -26,7 +26,7 @@ public class ForecastModel {
 
     public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "("
             + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + CITY_COLUMN + " TEXT NOT NULL,"
+            + CITY_COLUMN + " TEXT UNIQUE NOT NULL,"
             + DAY1_MIN + " INTEGER NOT NULL,"
             + DAY1_MAX + " INTEGER NOT NULL,"
             + DAY2 + " INTEGER NOT NULL,"

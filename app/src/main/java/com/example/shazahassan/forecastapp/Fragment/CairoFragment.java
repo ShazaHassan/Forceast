@@ -39,7 +39,13 @@ public class CairoFragment extends Fragment {
 
     View rootView;
 
-    private TextView city, description, tempDegree, dayOfWeek, minTemp, maxTemp, day2, day2minTemp, day2MaxTemp, day3, day3minTemp, day3MaxTemp, day4, day4minTemp, day4MaxTemp, day5, day5minTemp, day5MaxTemp, pressure, humidity, sunrise, sunset, contactUs;
+    private TextView city, description, tempDegree, dayOfWeek, minTemp, maxTemp,
+            day2, day2minTemp, day2MaxTemp,
+            day3, day3minTemp, day3MaxTemp,
+            day4, day4minTemp, day4MaxTemp,
+            day5, day5minTemp, day5MaxTemp,
+            pressure, humidity, sunrise, sunset,
+            contactUs;
     private APIWeatherInterface apiWeatherInterface;
     private Calendar calendar, currentDate;
     private int day, dayOfMonth, hour, currentDateDay, minute, hour1, minute1, currentTemp;
@@ -249,19 +255,36 @@ public class CairoFragment extends Fragment {
                 long sunriseHour = sysData.sunrise;
                 Date date = new Date(sunriseHour * 1000L);
                 calendar.setTime(date);
+                calendar.setTimeZone(TimeZone.getTimeZone("GMT+2"));
                 hour = calendar.get(Calendar.HOUR);
                 minute = calendar.get(Calendar.MINUTE);
+                if (minute < 10) {
+                    sunrise.setText(hour + ":0" + minute + "AM");
+                }
                 sunrise.setText(hour + ":" + minute + "AM");
+
                 long sunsetHour = sysData.sunset;
                 date = new Date(sunsetHour * 1000L);
                 calendar.setTime(date);
                 hour1 = calendar.get(Calendar.HOUR);
                 minute1 = calendar.get(Calendar.MINUTE);
-                sunset.setText(hour + ":" + minute + "PM");
+                if (minute1 < 10) {
+                    sunset.setText(hour1 + ":0" + minute1 + "PM");
+
+                }
+                sunset.setText(hour1 + ":" + minute1 + "PM");
 
                 // save data offline
-                helper.insertNewData(new WeatherModel((int) mainData.temp, (int) mainData.pressure, (int) mainData.humidity, resource.dt,
-                        name, weatherDataList.get(0).description, hour1 + ":" + minute1 + "PM", hour + ":" + minute + "AM"));
+                if (minute1 < 10) {
+                    helper.insertNewData(new WeatherModel((int) mainData.temp, (int) mainData.pressure, (int) mainData.humidity, resource.dt,
+                            name, weatherDataList.get(0).description, hour1 + ":0" + minute1 + "PM", hour + ":" + minute + "AM"));
+                } else if (minute < 10) {
+                    helper.insertNewData(new WeatherModel((int) mainData.temp, (int) mainData.pressure, (int) mainData.humidity, resource.dt,
+                            name, weatherDataList.get(0).description, hour1 + ":" + minute1 + "PM", hour + ":0" + minute + "AM"));
+                } else {
+                    helper.insertNewData(new WeatherModel((int) mainData.temp, (int) mainData.pressure, (int) mainData.humidity, resource.dt,
+                            name, weatherDataList.get(0).description, hour1 + ":" + minute1 + "PM", hour + ":" + minute + "AM"));
+                }
             }
 
             @Override

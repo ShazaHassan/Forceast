@@ -20,6 +20,7 @@ import java.util.List;
 public class WeatherDatabaseHelper extends SQLiteOpenHelper {
     // Database Version
     private static final int DATABASE_VERSION = 1;
+    boolean Added = false, addedForecast = false;
 
     // Database Name
     private static final String DATABASE_NAME = "forecast.db";
@@ -46,18 +47,21 @@ public class WeatherDatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void insertNewData(WeatherModel weatherModel) {
+        Added = false;
         SQLiteDatabase database = this.getWritableDatabase();
-        List<WeatherModel> models = new ArrayList<>();
-        models = getWeatherForAllCities();
+        List<WeatherModel> models = getWeatherForAllCities();
         if (models.size() != 0) {
             for (WeatherModel model : models) {
                 if (model.getCity().equals(weatherModel.getCity())) {
                     update(model, model.getCity());
-                } else {
-                    save(weatherModel, database);
+                    Added = true;
+                    break;
                 }
             }
         } else {
+            save(weatherModel, database);
+        }
+        if (!Added) {
             save(weatherModel, database);
         }
 
@@ -145,18 +149,22 @@ public class WeatherDatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void insertNewDataForecast(ForecastModel forecastModel) {
+        addedForecast = false;
         SQLiteDatabase database = this.getWritableDatabase();
-        List<ForecastModel> models = new ArrayList<>();
-        models = getForecastForAllCities();
+        List<ForecastModel> models = getForecastForAllCities();
         if (models.size() != 0) {
             for (ForecastModel model : models) {
                 if (model.getCityName().equals(forecastModel.getCityName())) {
                     updateForecast(model, model.getCityName());
-                } else {
-                    saveForecast(forecastModel, database);
+                    addedForecast = true;
+                    break;
                 }
             }
+
         } else {
+            saveForecast(forecastModel, database);
+        }
+        if (!addedForecast) {
             saveForecast(forecastModel, database);
         }
 
