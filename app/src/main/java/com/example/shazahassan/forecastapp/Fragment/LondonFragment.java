@@ -259,9 +259,9 @@ public class LondonFragment extends Fragment {
                 minute = calendar.get(Calendar.MINUTE);
                 if (minute < 10) {
                     sunrise.setText(hour + ":0" + minute + "AM");
+                } else {
+                    sunrise.setText(hour + ":" + minute + "AM");
                 }
-                sunrise.setText(hour + ":" + minute + "AM");
-
                 long sunsetHour = sysData.sunset;
                 date = new Date(sunsetHour * 1000L);
                 calendar.setTime(date);
@@ -271,9 +271,9 @@ public class LondonFragment extends Fragment {
                 if (minute1 < 10) {
                     sunset.setText(hour1 + ":0" + minute1 + "PM");
 
+                } else {
+                    sunset.setText(hour1 + ":" + minute1 + "PM");
                 }
-                sunset.setText(hour1 + ":" + minute1 + "PM");
-
                 // save data offline
                 if (minute1 < 10) {
                     helper.insertNewData(new WeatherModel((int) mainData.temp, (int) mainData.pressure, (int) mainData.humidity, resource.dt,

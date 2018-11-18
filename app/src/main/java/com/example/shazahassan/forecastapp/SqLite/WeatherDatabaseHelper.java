@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.shazahassan.forecastapp.SqLite.model.ForecastModel;
 import com.example.shazahassan.forecastapp.SqLite.model.WeatherModel;
@@ -79,12 +78,7 @@ public class WeatherDatabaseHelper extends SQLiteOpenHelper {
         values.put(WeatherModel.PRESSURE_COLUMN, weatherModel.getPressure());
         values.put(WeatherModel.HUMIDITY_COLUMN, weatherModel.getHumidity());
         values.put(WeatherModel.DATE_COLUMN, weatherModel.getDate());
-        long rowInserted = database.insert(WeatherModel.TABLE_NAME, null, values);
-
-        if (rowInserted != -1)
-            Toast.makeText(context, "New row added, row id: " + rowInserted, Toast.LENGTH_SHORT).show();
-        else
-            Toast.makeText(context, "Something wrong", Toast.LENGTH_SHORT).show();
+        database.insert(WeatherModel.TABLE_NAME, null, values);
     }
 
     public WeatherModel getOneCity(String cityName) {
@@ -139,13 +133,7 @@ public class WeatherDatabaseHelper extends SQLiteOpenHelper {
         values.put(WeatherModel.PRESSURE_COLUMN, weatherModel.getPressure());
         values.put(WeatherModel.HUMIDITY_COLUMN, weatherModel.getHumidity());
         values.put(WeatherModel.DATE_COLUMN, weatherModel.getDate());
-        int updatedRow = db.update(WeatherModel.TABLE_NAME, values, WeatherModel.CITY_COLUMN + " = ?",
-                new String[]{cityName});
-
-        if (updatedRow != -1)
-            Toast.makeText(context, "update , row id: " + updatedRow, Toast.LENGTH_SHORT).show();
-        else
-            Toast.makeText(context, "Something wrong", Toast.LENGTH_SHORT).show();
+        db.update(WeatherModel.TABLE_NAME, values, WeatherModel.CITY_COLUMN + " = ?", new String[]{cityName});
     }
 
     public void insertNewDataForecast(ForecastModel forecastModel) {
@@ -193,12 +181,9 @@ public class WeatherDatabaseHelper extends SQLiteOpenHelper {
         values.put(forecastModel.DAY5, forecastModel.getDay5());
         values.put(ForecastModel.DAY5_MIN, forecastModel.getDay5Min());
         values.put(forecastModel.DAY5_MAX, forecastModel.getDay5Max());
-        long rowInserted = database.insert(ForecastModel.TABLE_NAME, null, values);
+        database.insert(ForecastModel.TABLE_NAME, null, values);
 
-        if (rowInserted != -1)
-            Toast.makeText(context, "New row added, row id: " + rowInserted, Toast.LENGTH_SHORT).show();
-        else
-            Toast.makeText(context, "Something wrong", Toast.LENGTH_SHORT).show();
+
     }
 
     public ForecastModel getOneCityForecast(String cityName) {
@@ -284,12 +269,8 @@ public class WeatherDatabaseHelper extends SQLiteOpenHelper {
         values.put(forecastModel.DAY5, forecastModel.getDay5());
         values.put(ForecastModel.DAY5_MIN, forecastModel.getDay5Min());
         values.put(forecastModel.DAY5_MAX, forecastModel.getDay5Max());
-        int updatedRow = db.update(ForecastModel.TABLE_NAME, values, ForecastModel.CITY_COLUMN + " = ?",
+        db.update(ForecastModel.TABLE_NAME, values, ForecastModel.CITY_COLUMN + " = ?",
                 new String[]{cityName});
 
-        if (updatedRow != -1)
-            Toast.makeText(context, "update , row id: " + updatedRow, Toast.LENGTH_SHORT).show();
-        else
-            Toast.makeText(context, "Something wrong", Toast.LENGTH_SHORT).show();
     }
 }

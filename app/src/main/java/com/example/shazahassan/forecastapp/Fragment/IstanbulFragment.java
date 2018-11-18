@@ -266,7 +266,7 @@ public class IstanbulFragment extends Fragment {
                 long sunsetHour = sysData.sunset;
                 date = new Date(sunsetHour * 1000L);
                 calendar.setTime(date);
-                calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+                calendar.setTimeZone(TimeZone.getTimeZone("GMT+3"));
                 hour1 = calendar.get(Calendar.HOUR);
                 minute1 = calendar.get(Calendar.MINUTE);
                 if (minute1 < 10) {
