@@ -1,6 +1,7 @@
 package com.example.shazahassan.forecastapp.Fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.shazahassan.forecastapp.ContactUs;
 import com.example.shazahassan.forecastapp.R;
 import com.example.shazahassan.forecastapp.SqLite.WeatherDatabaseHelper;
 import com.example.shazahassan.forecastapp.SqLite.model.ForecastModel;
@@ -37,9 +39,7 @@ public class CairoFragment extends Fragment {
 
     View rootView;
 
-    private TextView city,description,tempDegree,dayOfWeek,minTemp,maxTemp,day2,day2minTemp,day2MaxTemp
-            ,day3,day3minTemp,day3MaxTemp
-            ,day4,day4minTemp,day4MaxTemp, day5, day5minTemp, day5MaxTemp, pressure, humidity, sunrise, sunset;
+    private TextView city, description, tempDegree, dayOfWeek, minTemp, maxTemp, day2, day2minTemp, day2MaxTemp, day3, day3minTemp, day3MaxTemp, day4, day4minTemp, day4MaxTemp, day5, day5minTemp, day5MaxTemp, pressure, humidity, sunrise, sunset, contactUs;
     private APIWeatherInterface apiWeatherInterface;
     private Calendar calendar, currentDate;
     private int day, dayOfMonth, hour, currentDateDay, minute, hour1, minute1, currentTemp;
@@ -183,6 +183,15 @@ public class CairoFragment extends Fragment {
         day5 = rootView.findViewById(R.id.day5);
         day5minTemp = rootView.findViewById(R.id.day5_temp_min);
         day5MaxTemp = rootView.findViewById(R.id.day5_temp_max);
+
+        //contact us
+        contactUs = rootView.findViewById(R.id.contactUs);
+        contactUs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getContext(), ContactUs.class));
+            }
+        });
     }
 
     private void setDay(TextView dayText, long date) {
